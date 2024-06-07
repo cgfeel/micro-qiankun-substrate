@@ -107,6 +107,12 @@
 - 包含个异步方法：`bootstrap`、`mount`、`unmount`
 - 暴露一个全局对象用于单独启动：`window.__POWERED_BY_QIANKUN_`
 
+静态应用需要通过 `http-server` 启动
+
+```
+npx http-server --port 30000 --cors
+```
+
 > 如果有必要也可以接受一个全局对象 `window.__INJECTED_PUBLIC_PATH_BY_QIANKUN__` 作为静态资源
 
 基座应用手动添加容器 [[查看](https://github.com/cgfeel/micro-qiankun-substrate/blob/main/src/App.tsx)]：
