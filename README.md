@@ -1,6 +1,6 @@
 # micro-qiankun-substrate
 
-一个 qiankun 基座，完整内容查看微前端主仓库：https://github.com/cgfeel/zf-micro-app
+一个 `qiankun` 基座，完整内容查看微前端主仓库：https://github.com/cgfeel/zf-micro-app
 
 包含项目：
 
