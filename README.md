@@ -51,6 +51,8 @@
 
 ### 配置 `React` 子应用
 
+目录：`react-project` [[查看](https://github.com/cgfeel/micro-qiankun-app-cra)]
+
 入口文件 `index.tsx` [[查看](https://github.com/cgfeel/micro-qiankun-app-cra/blob/main/src/index.tsx)]：
 
 - 暴露 3 个异步方法：`bootstrap`、`mount`、`unmount`
@@ -78,6 +80,8 @@
 
 ### 配置 `Vue` 子应用
 
+目录：`vue-project` [[查看](https://github.com/cgfeel/micro-qiankun-app-vue3)]
+
 入口文件 `main.vue` [[查看](https://github.com/cgfeel/micro-qiankun-app-vue3/blob/main/src/main.ts)]：
 
 - 暴露 3 个异步方法：`bootstrap`、`mount`、`unmount`
@@ -100,6 +104,8 @@
 - 添加输出格式为 `umd`，添加项目名
 
 ### 手动加载自定义的静态子仓库
+
+目录：`static-project` [[查看](https://github.com/cgfeel/micro-qiankun-app-static)]
 
 自定义静态子仓库 [[查看](https://github.com/cgfeel/micro-qiankun-app-static/blob/main/index.html)]：
 
