@@ -34,7 +34,7 @@
 
 目录：`substrate` [[查看](https://github.com/cgfeel/micro-qiankun-substrate)] 当前仓库
 
-3 部完成：
+3 步完成：
 
 - 在 `src` 下添加注册文件 `registerApps.ts` [[查看](https://github.com/cgfeel/micro-qiankun-substrate/blob/main/src/registerApp.ts)]
 - 将 `registerApps.ts` 在入口文件引入 [[查看](https://github.com/cgfeel/micro-qiankun-substrate/blob/main/src/index.tsx)]
