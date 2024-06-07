@@ -32,7 +32,7 @@
 - 将 `registerApps.ts` 在入口文件引入 [[查看](https://github.com/cgfeel/micro-qiankun-substrate/blob/main/src/index.tsx)]
 - 使用 `React-Router` 作为路由劫持，并添加放置容器的 Dom 节点 [[查看](https://github.com/cgfeel/micro-qiankun-substrate/blob/main/src/App.tsx)]
 
-和 ` single-spa` 对比：
+和 `single-spa` 对比：
 
 - 不再需要按照 `SystemJS` 那样需要将导入资源表和注册信息分别写入
 - 不再要求父子应用名和项目完整名称对应
@@ -59,9 +59,56 @@
 - 添加输出格式为 `umd`，添加项目名 [[查看](https://github.com/cgfeel/micro-qiankun-app-cra/blob/main/config-overrides.js)]
 - 修改 `package.json` 的 `script` [[查看](https://github.com/cgfeel/micro-qiankun-app-cra/blob/main/package.json)]
 
+设置端口号 [[查看](https://github.com/cgfeel/micro-qiankun-app-cra/blob/main/.env)]：
+
+- `PORT`、`WDS_SOCKET_PORT`
+
 和章节不一样的地方：
 
 - 使用 `react-app-rewired` 代替 `@rescripts/cli`，因为 `@rescripts/cli` 依赖和 `react-scripts@5.0.1` 冲突
 - 不需要配置 `create-react-app` 的 `cors`，默认支持
 
 ### 配置 `Vue` 子应用
+
+入口文件 `main.vue` [[查看](https://github.com/cgfeel/micro-qiankun-app-vue3/blob/main/src/main.ts)]：
+
+- 暴露 3 个异步方法：`bootstrap`、`mount`、`unmount`
+- 暴露一个全局对象用于单独启动：`window.__POWERED_BY_QIANKUN_`
+- 在 `Vue` 之前引入动态 `publicPath`
+
+分离路由 `index.ts` [[查看](https://github.com/cgfeel/micro-qiankun-app-vue3/blob/main/src/router/index.ts)]：
+
+- 将 `router` 从 `routes` 分离到 `main.vue`
+- 这样便于记录 `history`、`router`，便于在注销时 `destory`
+
+运行时动态 `publicPath`：
+
+- 设置 `__webpack_public_path__` [[查看](https://github.com/cgfeel/micro-qiankun-app-vue3/blob/main/src/public-path.ts)]
+- `TypeScript` 还需声明文件 `globals.d.ts` [[查看](https://github.com/cgfeel/micro-qiankun-app-vue3/blob/main/src/globals.d.ts)]
+
+配置 `vue.config.js` [[查看](https://github.com/cgfeel/micro-qiankun-app-vue3/blob/main/vue.config.js)]：
+
+- 设置端口号和 `cors`
+- 添加输出格式为 `umd`，添加项目名
+
+### 手动加载自定义的静态子仓库
+
+自定义静态子仓库 [[查看](https://github.com/cgfeel/micro-qiankun-app-static/blob/main/index.html)]：
+
+- 给 `window` 添加一个项目名作为属性，演示为：`@levi/static`
+- 包含个异步方法：`bootstrap`、`mount`、`unmount`
+- 暴露一个全局对象用于单独启动：`window.__POWERED_BY_QIANKUN_`
+
+> 如果有必要也可以接受一个全局对象 `window.__INJECTED_PUBLIC_PATH_BY_QIANKUN__` 作为静态资源
+
+基座应用手动添加容器 [[查看](https://github.com/cgfeel/micro-qiankun-substrate/blob/main/src/App.tsx)]：
+
+- 通过 `qiankun` 提供的 `loadMicroApp` 手动加载应用
+- 添加一个自定义的容器节点，演示中是：`yourContainer`
+
+注意：珠峰的课程有个错误，通过 `ref` 提供容器节点会导致报错子应用未卸载又加载的情况
+
+> dex.js:1 single-spa minified message #31: See https://single-spa.js.org/error/?code=31&arg=mount&arg=parcel&arg=app1_1&arg=3000
+
+- 这里的解决办法是将 `ref` 替换成 `id` 即可
+- 但这不是唯一解，这个问题会发生在不同的情况，具体情况具体解决
