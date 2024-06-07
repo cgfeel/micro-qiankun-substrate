@@ -22,6 +22,14 @@
 - 支持沙箱、支持预加载
 - 缺点：`css` 沙箱隔离方案在不同的情况下可能存在问题
 
+对比看了下 `qiankun` 官网的配置过程有点老了：
+
+- `React` 子应用演示版本是 `React 16`，其中 `ReactDOM.unmountComponentAtNode` 在版本 18 中已废弃
+- `Vue` 子应用演示版本是 `Vue2`
+- `@rescripts/cli` 对新版的 `create-react-app` 支持不够好
+
+建议按照下面配置方式
+
 ### 搭建基座主应用
 
 目录：`substrate` [[查看](https://github.com/cgfeel/micro-qiankun-substrate)] 当前仓库
