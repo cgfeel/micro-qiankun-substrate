@@ -26,8 +26,10 @@
 
 目录：`substrate` [[查看](https://github.com/cgfeel/micro-qiankun-substrate)] 当前仓库
 
+3 部完成：
+
 - 在 `src` 下添加注册文件 `registerApps.ts` [[查看](https://github.com/cgfeel/micro-qiankun-substrate/blob/main/src/registerApp.ts)]
-- 将 `registerApps.ts` 在入口文件引入，见 `index.ts` [[查看](https://github.com/cgfeel/micro-qiankun-substrate/blob/main/src/index.tsx)]
+- 将 `registerApps.ts` 在入口文件引入，见 `index.tsx` [[查看](https://github.com/cgfeel/micro-qiankun-substrate/blob/main/src/index.tsx)]
 - 使用 `React-router` 作为路由劫持，并添加放置容器的 Dom 节点，见 `App.tsx` [[查看](https://github.com/cgfeel/micro-qiankun-substrate/blob/main/src/App.tsx)]
 
 和 ` single-spa` 对比：
@@ -40,3 +42,16 @@
 - 直接拿现有的框架作为基座，而不是将 `single-spa` 作为基座
 
 ### 搭建 `React` 子应用
+
+入口文件 `index.tsx` [[查看](https://github.com/cgfeel/micro-qiankun-app-cra/blob/main/src/index.tsx)]：
+
+- 暴露 3 个异步方法：`bootstrap`、`mount`、`unmount`
+- 暴露一个全局对象用于单独启动：`window.__POWERED_BY_QIANKUN_`
+- 在 `React` 之前引入动态 `publicPath`
+
+运行时动态 `publicPath`：
+
+- 设置 `__webpack_public_path__`，见 `public-path.ts` [[查看](https://github.com/cgfeel/micro-qiankun-app-cra/blob/main/src/public-path.ts)]
+- `TypeScript` 还需声明文件 `globals.d.ts` [[查看](https://github.com/cgfeel/micro-qiankun-app-cra/blob/main/src/globals.d.ts)]
+
+配置 `webpack`，这里我通过
