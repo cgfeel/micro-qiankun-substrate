@@ -201,6 +201,7 @@ npx http-server --port 30000 --cors
 
 - 子应用没办法直接挂载到 `body` 下，而是一个完全隔离的 `shadownDOM` 沙箱内
 - `closed`模式下，父应用无法管理子应用
+- 属于 `web component`，需要现代浏览器支持
 
 > 在 `qiankun` 中不推荐通过通过 `shadownDOM` 进行隔离，这会给父子应用相互操作带来问题
 
@@ -220,6 +221,7 @@ npx http-server --port 30000 --cors
 
 - 先保存 a 应用的属性，失活的时候把修改的属性存起来，激活的时候还原回来
 
-缺点：
+优缺点：
 
-- 浪费内存，要给 `window` 拍照
+- 优点：不存在兼容问题
+- 缺点：浪费内存，要给 `window` 拍照
