@@ -160,7 +160,11 @@ npx http-server --port 30000 --cors
 `strictStyleIsolation`：
 
 - 原理：将子应用放到 `shadom-root` 中进行隔离
-- 缺点：完全隔离，无法拿到外层的属性，在当前演示中静态子应用将失效
+- 缺点 1：完全隔离，无法拿到外层的属性，在当前演示中静态子应用将失效
+- 缺点 2：子应用没办法直接挂载到 body 下，而是一个完全隔离的 `shadownDOM` 沙箱内
+- 缺点 3：`closed`模式下，父应用无法管理子应用
+
+> 在 `qiankun` 中不推荐通过通过 `shadownDOM` 进行隔离，这会给父子应用相互操作带来问题
 
 样式隔离的几个方式：
 
@@ -169,4 +173,10 @@ npx http-server --port 30000 --cors
 - `css-in-js` 通过 `:where` 在不提权情况下设置样式，详细记录在 `@cgfeel/ant-design-style` [[查看](https://github.com/cgfeel/ant-design-style)]
 - `shadowDOM` 严格隔离
 
-下面会通过通过演示对沙箱做一个简单了解
+### 沙箱原理
+
+下面会通过几个演示展示沙箱的原理
+
+#### `ShadowDom`
+
+目录：
