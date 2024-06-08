@@ -187,7 +187,7 @@ npx http-server --port 30000 --cors
 
 步骤：
 
-1. 创建一个模板
+1. 创建一个模板 `template`
 2. 将模板变成 `Dom` 元素 `appElement`
 3. 初始化了一个关联到 `appElement` 的 `Shadow DOM` 树，并将 `Dom` 内容赋值给 `Shadow DOM` 树内
 4. 将 `Dom` 内容清空，这样 `appElement` 就只剩下 `Shadow DOM`
