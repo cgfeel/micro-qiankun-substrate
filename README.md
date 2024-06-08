@@ -135,12 +135,12 @@ npx http-server --port 30000 --cors
 
 ### 父子应用通信
 
-基座应用：
+基座应用 [[查看](https://github.com/cgfeel/micro-qiankun-substrate/blob/main/src/registerApp.ts)]：
 
-- 使用 `initGlobalState` 创建一个 `state`，通过 `onGlobalStateChange` 接收订阅 [[查看](https://github.com/cgfeel/micro-qiankun-substrate/blob/main/src/registerApp.ts)]
+- 使用 `initGlobalState` 创建一个 `state`，通过 `onGlobalStateChange` 接收订阅
 
-子应用：
+子应用 [[查看](https://github.com/cgfeel/micro-qiankun-app-cra/blob/main/src/index.tsx)]：
 
-- 在 `mount` 的 `props` 中提供 `onGlobalStateChange` 接受订阅，`setGlobalState` 发布订阅 [[查看](https://github.com/cgfeel/micro-qiankun-app-cra/blob/main/src/index.tsx)]
+- 在 `mount` 的 `props` 中提供 `onGlobalStateChange` 接受订阅，`setGlobalState` 发布订阅
 - 只有 `mount` 的 `props` 存在订阅方法，`bootstrap` 没有
 - 可以通过 `context` 或者透传传递订阅方法
