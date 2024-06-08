@@ -249,3 +249,25 @@ npx http-server --port 30000 --cors
 - `proxy` 需要现代浏览器支持
 - 只支持一个应用，多个应用一起运行 `window` 就一个，就乱了
 - 不能直接代理 `window`，这样会在设置时无限循环
+
+#### 4. 通过 `proxy` 代理多例应用
+
+为了避免多个应用 `window` 错乱的问题，将 `window` 更改到每个 `sandbox` 实例的 `proxy`：
+
+- 目录：`proxy-sandbox.html` [[查看](https://github.com/cgfeel/micro-qiankun-app-static/blob/main/sandbox/proxy-sandbox.html)]
+- URL：`/sandbox/proxy-sandbox.html`
+
+原理：
+
+- 沙箱中用每个实例的 `proxy` 作为 `window`
+- 每个应用的 `window` 修改互不干扰，也不影响真实的 `window`
+- 通过 `runing` 来决定沙箱激活状态，来决定每个应用中 `window` 取值
+
+优点：
+
+- 不用为 `window` 拍照消耗内存
+- 支持多个应用互不干扰，也不影响真实的 `window`
+
+缺点：
+
+- `proxy` 需要现代浏览器支持
