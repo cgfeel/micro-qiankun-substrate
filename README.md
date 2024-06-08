@@ -225,3 +225,27 @@ npx http-server --port 30000 --cors
 
 - 优点：不存在兼容问题
 - 缺点：浪费内存，要给 `window` 拍照
+
+#### 2. 通过 `proxy` 代理单例应用
+
+为了避免给整个 `window` 拍照浪费内存，使用一个 `proxy` 只对修改的内容做记录
+
+- 目录：`legacy-sandbox.html` [[查看](https://github.com/cgfeel/micro-qiankun-app-static/blob/main/sandbox/legacy-sandbox.html)]
+- URL：`/sandbox/legacy-sandbox.html`
+
+原理：
+
+- 创建 3 个对象分别记录：修改 `modifyPropsMap`、新增 `addedPropsMap`、所有记录 `currentPropsMap`
+- 创建一个 `proxy` 用于设置值是记录副本，读取 `window`
+- 激活时将 `currentPropsMap` 重新赋值给 `window`
+- 失活时将 `modifyPropsMap`、`addedPropsMap` 拿出来还原
+
+优点：
+
+- 不用为 `window` 拍照消耗内存
+
+缺点：
+
+- `proxy` 需要现代浏览器支持
+- 只支持一个应用，多个应用一起运行 `window` 就一个，就乱了
+- 不能直接代理 `window`，这样会在设置时无限循环
