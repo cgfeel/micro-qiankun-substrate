@@ -1,10 +1,15 @@
-import { registerMicroApps, start } from "qiankun";
+import { initGlobalState, registerMicroApps, start } from "qiankun";
 
+const action = initGlobalState({ age: 18, name: "levi" });
 const customProps = { num: 1, util: {} };
 
 const loader = (loading: boolean) => {
     console.log("加载状态", loading);
 }
+
+action.onGlobalStateChange((newValue, oldValue) => {
+    console.log("parent state change", newValue, oldValue);
+});
 
 registerMicroApps([
     {

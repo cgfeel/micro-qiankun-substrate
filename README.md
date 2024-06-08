@@ -91,7 +91,7 @@
 分离路由 `index.ts` [[查看](https://github.com/cgfeel/micro-qiankun-app-vue3/blob/main/src/router/index.ts)]：
 
 - 将 `router` 从 `routes` 分离到 `main.vue`
-- 这样便于记录 `history`、`router`，便于在注销时 `destory`
+- 这样便于记录 `history`、`router`，在注销时 `destory`
 
 运行时动态 `publicPath`：
 
@@ -132,3 +132,15 @@ npx http-server --port 30000 --cors
 
 - 这里的解决办法是将 `ref` 替换成 `id` 即可
 - 但这不是唯一解，这个问题会发生在不同的情况，具体情况具体解决
+
+### 父子应用通信
+
+基座应用：
+
+- 使用 `initGlobalState` 创建一个 `state`，通过 `onGlobalStateChange` 接收订阅 [[查看](https://github.com/cgfeel/micro-qiankun-substrate/blob/main/src/registerApp.ts)]
+
+子应用：
+
+- 在 `mount` 的 `props` 中提供 `onGlobalStateChange` 接受订阅，`setGlobalState` 发布订阅 [[查看](https://github.com/cgfeel/micro-qiankun-app-cra/blob/main/src/index.tsx)]
+- 只有 `mount` 的 `props` 存在订阅方法，`bootstrap` 没有
+- 可以通过 `context` 或者透传传递订阅方法
