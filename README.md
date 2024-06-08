@@ -144,3 +144,29 @@ npx http-server --port 30000 --cors
 - 在 `mount` 的 `props` 中提供 `onGlobalStateChange` 接受订阅，`setGlobalState` 发布订阅
 - 只有 `mount` 的 `props` 存在订阅方法，`bootstrap` 没有
 - 可以通过 `context` 或者透传传递订阅方法
+
+### `qiankun` 沙箱隔离样式
+
+将主应用的样式居中去掉 [[查看](https://github.com/cgfeel/micro-qiankun-substrate/blob/main/src/App.css)] 没有效果，这时子应用的样式影响了主应用
+
+解决办法如下 [[查看][https://github.com/cgfeel/micro-qiankun-substrate/blob/main/src/registerApp.ts]]：
+
+`experimentalStyleIsolation`：
+
+- 原理：通过 `css-module`，为每一个子应用的样式添加一个选择器，如：`.name[data-qiankun="xxxx"] `
+- 缺点 1：子应用的 DOM 元素挂载到了外层，会导致样式不生效
+- 缺点 2：子应用设置样式在 `body`，会导致样式不生效
+
+`strictStyleIsolation`：
+
+- 原理：将子应用放到 `shadom-root` 中进行隔离
+- 缺点：完全隔离，无法拿到外层的属性，在当前演示中静态子应用将失效
+
+样式隔离的几个方式：
+
+- `css-module`、`scope` 生成一个选择器，如：`.name[data-qiankun="xxxx"] `
+- `BEM`
+- `css-in-js` 通过 `:where` 在不提权情况下设置样式，详细记录在 `@cgfeel/ant-design-style` [[查看](https://github.com/cgfeel/ant-design-style)]
+- `shadowDOM` 严格隔离
+
+下面会通过通过演示对沙箱做一个简单了解

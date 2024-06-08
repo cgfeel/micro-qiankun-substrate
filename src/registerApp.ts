@@ -46,4 +46,21 @@ registerMicroApps([
     }
 });
 
-start();
+// 样式隔离的几个方式
+// css-module、scope 生成一个选择器：.name[data-qiankun="xxxx"] 
+// BEM
+// css-in-js 通过 `:where` 在不提权情况下设置样式
+// shadowDOM 严格隔离
+
+start({
+    sandbox: {
+        // 实现了动态样式表
+        // 缺点 1：子应用的 Dom 元素挂载到了外层，会导致样式不生效
+        // 缺点 2：子应用设置样式在 body，会导致样式不生效
+        experimentalStyleIsolation: true
+
+        // 将子应用放到 shadom-root 中进行隔离
+        // 缺点：完全隔离，无法拿到外层的属性，在当前演示中静态子应用将失效
+        // strictStyleIsolation: true,
+    }
+});
