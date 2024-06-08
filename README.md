@@ -203,3 +203,23 @@ npx http-server --port 30000 --cors
 - `closed`模式下，父应用无法管理子应用
 
 > 在 `qiankun` 中不推荐通过通过 `shadownDOM` 进行隔离，这会给父子应用相互操作带来问题
+
+#### 2. `window` 快照实现沙箱
+
+通过快照的方式防止应用加载的时候污染 `window` 对象
+
+- 目录：`sandbox.html` [[查看](https://github.com/cgfeel/micro-qiankun-app-static/blob/main/sandbox/sandbox.html)]
+- URL：`/sandbox/sandbox.html`
+
+过程：
+
+- 加载 a 应用更改 `window` 属性，卸载删除
+- 加载 b 应用更改 `window` 属性
+
+模式：
+
+- 先保存 a 应用的属性，失活的时候把修改的属性存起来，激活的时候还原回来
+
+缺点：
+
+- 浪费内存，要给 `window` 拍照
