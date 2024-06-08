@@ -147,9 +147,9 @@ npx http-server --port 30000 --cors
 
 ### `qiankun` 沙箱隔离样式
 
-将主应用的样式居中去掉 [[查看](https://github.com/cgfeel/micro-qiankun-substrate/blob/main/src/App.css)] 没有效果，这时子应用的样式影响了主应用
+将主应用的样式居中注释掉 [[查看](https://github.com/cgfeel/micro-qiankun-substrate/blob/main/src/App.css)] 没有效果，这时子应用的样式影响了主应用
 
-解决办法如下 [[查看][https://github.com/cgfeel/micro-qiankun-substrate/blob/main/src/registerApp.ts]]：
+解决办法如下 [[查看](https://github.com/cgfeel/micro-qiankun-substrate/blob/main/src/registerApp.ts)]：
 
 `experimentalStyleIsolation`：
 
