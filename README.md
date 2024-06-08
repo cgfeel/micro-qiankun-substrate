@@ -160,11 +160,7 @@ npx http-server --port 30000 --cors
 `strictStyleIsolation`：
 
 - 原理：将子应用放到 `shadom-root` 中进行隔离
-- 缺点 1：完全隔离，无法拿到外层的属性，在当前演示中静态子应用将失效
-- 缺点 2：子应用没办法直接挂载到 body 下，而是一个完全隔离的 `shadownDOM` 沙箱内
-- 缺点 3：`closed`模式下，父应用无法管理子应用
-
-> 在 `qiankun` 中不推荐通过通过 `shadownDOM` 进行隔离，这会给父子应用相互操作带来问题
+- 缺点：完全隔离，无法拿到外层的属性，在当前演示中静态子应用将失效
 
 样式隔离的几个方式：
 
@@ -177,6 +173,33 @@ npx http-server --port 30000 --cors
 
 下面会通过几个演示展示沙箱的原理
 
-#### `ShadowDom`
+- 所在项目：`static-project` [[查看](https://github.com/cgfeel/micro-qiankun-app-static)]
+- 运行方式：`http-server` 作为独立应用单独打开，或直接点开指定 html
 
-目录：
+#### 1. `ShadowDom`
+
+通过沙箱隔离样式：
+
+- 目录：`shadow-dom.html` [[查看](https://github.com/cgfeel/micro-qiankun-app-static/blob/main/sandbox/shadow-dom.html)]
+- URL：`/sandbox/shadow-dom.html`
+
+> `wujie` 利用了空 `iframe` 来做 JS 的隔离，`shadowDOM` 来做 CSS 隔离
+
+步骤：
+
+1. 创建一个模板
+2. 将模板变成 `Dom` 元素 `appElement`
+3. 初始化了一个关联到 `appElement` 的 `Shadow DOM` 树，并将 `Dom` 内容赋值给 `Shadow DOM` 树内
+4. 将 `Dom` 内容清空，这样 `appElement` 就只剩下 `Shadow DOM`
+5. 将只带有沙箱的 `Dom` 的 `appElement` 添加到 `body` 下
+
+优点：
+
+- 完全隔离
+
+缺点：
+
+- 子应用没办法直接挂载到 `body` 下，而是一个完全隔离的 `shadownDOM` 沙箱内
+- `closed`模式下，父应用无法管理子应用
+
+> 在 `qiankun` 中不推荐通过通过 `shadownDOM` 进行隔离，这会给父子应用相互操作带来问题
