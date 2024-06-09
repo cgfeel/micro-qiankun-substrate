@@ -276,11 +276,11 @@ npx http-server --port 30000 --cors
 
 ### 乾坤原理
 
-分为 2 个部分，注册和运行，为了便于阅读全部以当前 `github` 提交的版本 `eeebd3f76aa3a9d026b4f3a4e86682088e6295c1` 为准，这一章节链接指向官方文档
+分为注册和运行，为了便于阅读全部以当前 `github` 提交的版本 `eeebd3f76aa3a9d026b4f3a4e86682088e6295c1` 为准，这一章节链接指向官方文档
 
 #### 1. `registerMicroApps` 注册
 
-目录：`apis` - `registerMicroApps` [[查看](https://github.com/umijs/qiankun/blob/eeebd3f76aa3a9d026b4f3a4e86682088e6295c1/src/apis.ts#L59)]
+目录：`apis.ts` - `registerMicroApps` [[查看](https://github.com/umijs/qiankun/blob/eeebd3f76aa3a9d026b4f3a4e86682088e6295c1/src/apis.ts#L59)]
 
 参数：
 
@@ -297,12 +297,15 @@ npx http-server --port 30000 --cors
 
 #### 2. `start` 执行
 
-目录：`apis` - `start` [[查看](https://github.com/umijs/qiankun/blob/eeebd3f76aa3a9d026b4f3a4e86682088e6295c1/src/apis.ts#L210)]
+目录：`apis.ts` - `start` [[查看](https://github.com/umijs/qiankun/blob/eeebd3f76aa3a9d026b4f3a4e86682088e6295c1/src/apis.ts#L210)]
 
 和 `registerMicroApps` 一样，衍用了 `single-spa` 的 `start` 方法，在此基础上增加了优化的参数：
 
-- `prefetch`：应用预加载
+- `prefetch`：应用预加载，默认为 `true`
 - `singular`：默认为 `true`，单例模式，也可以接受一个方法，类型为 `(app: RegistrableApp<any>) => Promise<boolean>` 注 ①
+- `sandbox`：沙箱
+
+其他的参数将在后面整理官方 API 时记录
 
 > 注 ①：`qiankun` 文档说 `singular` 默认为 `false`，实际源码是 `true`
 >
@@ -312,3 +315,90 @@ npx http-server --port 30000 --cors
 >
 > - 渲染：单例同一时间只能渲染一个应用
 > - 沙箱：多例只能用 `proxy` 作为沙箱，而单例除此之外还支持快照沙箱来实现
+
+流程：
+
+- 如果支持预加载则开始调用预加载策略：`doPrefetchStrategy` 注 ②
+- 对不支持 `proxy` 的沙箱做降级处理：`autoDowngradeForLowVersionBrowser`
+- 启动 `single-spa`：`startSingleSpa`
+- 完成启动，调用成功的 `promise`：`frameworkStartedDefer.resolve()`
+
+> 注 ② `doPrefetchStrategy` 和 `React` 的 `fiber` 一样利用浏览器空闲时间进行加载
+
+#### 2.1. `doPrefetchStrategy` 预加载
+
+目录：`prefetch.ts` - `doPrefetchStrategy` [[查看](https://github.com/umijs/qiankun/blob/eeebd3f76aa3a9d026b4f3a4e86682088e6295c1/src/prefetch.ts#L111)]
+
+参数：
+
+- `apps`：所有注册的应用
+- `prefetchStrategy`：预加载策略
+- `importEntryOpts`：启动选项
+
+加载策略 `prefetchStrategy`：
+
+- 数组：根据数组筛选应用 - 等待加载 注 ③
+- `Promise` 函数：将所有应用传递过去返回两个对象：`criticalAppNames` 立即加载、`prefetchAfterFirstMounted` 等待加载 注 ③
+- `true`：所有应用等待加载 注 ③
+- `all`：所有应用立即加载
+
+> 注 ③：等待第一个应用加载完毕后加载其他应用 `prefetchAfterFirstMounted`，见 2.1.1
+
+#### 2.1.1. `prefetchAfterFirstMounted` 等待预加载
+
+等待第一个应用加载完毕后加载其他应用
+
+目录：`prefetch.ts` - `prefetchAfterFirstMounted` [[查看](https://github.com/umijs/qiankun/blob/eeebd3f76aa3a9d026b4f3a4e86682088e6295c1/src/prefetch.ts#L88)]
+
+- `apps`：经过筛选后需要启动的应用
+- `importEntryOpts`：启动选项
+
+原理，在 `single-spa` 中第一个应用加载完会发送事件 `single-spa:first-mount`：
+
+- 添加监听事件：`single-spa:first-mount`
+- 在加载事件回调的内部先筛选所有状态为 `NOT_LOADED` 的应用集合
+- 没有加载的应用依次加载：`prefetch`
+- 加载完毕后移除监听：`single-spa:first-mount`
+
+由上可以得出 `start` 预加载过程如下：
+
+- `startSingleSpa` 发起一个微任务，启动 `single-spa` 等待执行
+- 同步添加一个自定义事件：`single-spa:first-mount`
+- 执行微任务启动应用
+- 完成启动触发自定义事件：`single-spa:first-mount`，注 ④
+- 在事件回调 `listener` 中执行预加载 `prefetch`
+- 完成事件回调，删除本次监听事件：`single-spa:first-mount`
+
+如有需要可以重复这个过程
+
+> 注 ④：由 `single-spa` 的 `mount.js` 派发事件 [[查看](https://github.com/single-spa/single-spa/blob/main/src/lifecycles/mount.js)]
+
+#### 2.1.1. `prefetch` 预加载
+
+目录：`prefetch.ts` - `prefetch` [[查看](https://github.com/umijs/qiankun/blob/eeebd3f76aa3a9d026b4f3a4e86682088e6295c1/src/prefetch.ts#L75)]
+
+参数：
+
+- `entry`：应用入口链接
+- `opts`：启动选项，即 `importEntryOpts`
+
+流程：
+
+- 不在线或网速慢的情况不加载
+- 使用 `requestIdleCallback` 利用空闲时间调用入口文件
+- 异步方法 `importEntry` 预加载入口文件，用于替代 `systemjs` [[回顾](https://github.com/cgfeel/micro-systemjs)]
+- 在入口文件预加载后返回两个方法继续利用 `requestIdleCallback` 在空闲时加载
+
+`importEntry` 返回两个方法：
+
+- `getExternalScripts` 获取脚本、`getExternalStyleSheets` 获取样式，注 ⑤
+- 这两个方法都是一个异步方法，最终返回资源链接的集合：`Promise<string[]>`
+- 通过返回的方法获取额外的样式表和脚本的操作
+
+> 注 ⑤：除此之外还返回了路径、模板、执行脚本等属性，具体查看 `import-html-entry` [[查看](https://github.com/kuitos/import-html-entry)]：
+>
+> - 但在 `qiankun` 中除了返回的指定 2 个方法以外其他均不需要关心
+> - 通过 `importEntry` 加载的入口 `template`，会将所有脚本和样式注释掉
+> - 然后将`script`、样式表通过 `getExternalScripts`、`getExternalStyleSheets` 这两个方法进行处理
+> - 例如给样式增加前缀 `css-modules` 或放到 `shadowDom` 中
+> - 例如脚本会放到沙箱中执行
