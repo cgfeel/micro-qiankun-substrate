@@ -271,3 +271,44 @@ npx http-server --port 30000 --cors
 缺点：
 
 - `proxy` 需要现代浏览器支持
+
+---- 分割线 ----
+
+### 乾坤原理
+
+分为 2 个部分，注册和运行，为了便于阅读全部以当前 `github` 提交的版本 `eeebd3f76aa3a9d026b4f3a4e86682088e6295c1` 为准，这一章节链接指向官方文档
+
+#### 1. `registerMicroApps` 注册
+
+目录：`apis` - `registerMicroApps` [[查看](https://github.com/umijs/qiankun/blob/eeebd3f76aa3a9d026b4f3a4e86682088e6295c1/src/apis.ts#L59)]
+
+参数：
+
+- `apps`：注册的应用信息
+- `lifeCycles`：生命周期
+
+流程：
+
+- 通过 `microApps` 筛选 `app.name` 排除已注册过的应用得到 `unregisteredApps`
+- 将 `unregisteredApps` 追加到 `microApps` 之后开始遍历注册每一个应用
+- 将拿到的应用信息，通过 `registerApplication` 注册到 `single-spa`
+- 由 `single-spa` 进行路由劫持，具体参考前面演示 [[查看](https://github.com/cgfeel/micro-qiankun-substrate)]
+- 注册完成后不会立即执行逻辑，会等待路由匹配之后执行 `app` 对应的方法
+
+#### 2. `start` 执行
+
+目录：`apis` - `start` [[查看](https://github.com/umijs/qiankun/blob/eeebd3f76aa3a9d026b4f3a4e86682088e6295c1/src/apis.ts#L210)]
+
+和 `registerMicroApps` 一样，衍用了 `single-spa` 的 `start` 方法，在此基础上增加了优化的参数：
+
+- `prefetch`：应用预加载
+- `singular`：默认为 `true`，单例模式，也可以接受一个方法，类型为 `(app: RegistrableApp<any>) => Promise<boolean>` 注 ①
+
+> 注 ①：`qiankun` 文档说 `singular` 默认为 `false`，实际源码是 `true`
+>
+> `frameworkConfiguration = { prefetch: true, singular: true, sandbox: true, ...opts };`
+>
+> 单例和多例的区别主要：
+>
+> - 渲染：单例同一时间只能渲染一个应用
+> - 沙箱：多例只能用 `proxy` 作为沙箱，而单例除此之外还支持快照沙箱来实现

@@ -11,6 +11,8 @@ action.onGlobalStateChange((newValue, oldValue) => {
     console.log("parent state change", newValue, oldValue);
 });
 
+debugger
+
 registerMicroApps([
     {
         name: "reactApp",
