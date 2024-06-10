@@ -274,7 +274,7 @@ npx http-server --port 30000 --cors
 
 ---- 分割线 ----
 
-### 乾坤原理
+### `qiankun` 原理
 
 分为注册和运行，为了便于阅读全部以当前 `github` 提交的版本 `eeebd3f76aa3a9d026b4f3a4e86682088e6295c1` 为准，这一章节链接指向官方文档
 
@@ -436,7 +436,7 @@ npx http-server --port 30000 --cors
 
 其他模式均不做处理，将传递过来的配置信息原封返回回去
 
-#### 2.3. `startSingleSpa` 加载应用
+#### 2.3. `startSingleSpa` 启动应用
 
 目录：`apis.ts` - `registerMicroApps` - `registerApplication` - `app` [[查看](https://github.com/umijs/qiankun/blob/eeebd3f76aa3a9d026b4f3a4e86682088e6295c1/src/apis.ts#L73)]
 
@@ -444,6 +444,42 @@ npx http-server --port 30000 --cors
 
 - 设置加载状态：`loader(true);`
 - `frameworkStartedDefer.promise` 确保等待调用 `start` 才执行，见注册流程最后一步 [[查看](#1-registermicroapps-注册)]
-- 将应用名、`props`等应用信息、启动配置、生命周期传给 `promise` 方法 `loadApp`
+- 将应用名、`props`等应用信息、启动配置、生命周期传给 `promise` 方法 `loadApp` 来加载应用
 - `loadApp` 返回一个方法并执行得到一个包含挂载情况的对象
 - 最终返回应用的接入协议
+
+#### 2.3.1. `loadApp` 加载应用
+
+目录：`loader.ts` - `loadApp` [[查看](https://github.com/umijs/qiankun/blob/eeebd3f76aa3a9d026b4f3a4e86682088e6295c1/src/loader.ts#L244)]
+
+参数：
+
+- `app`：应用信息
+- `configuration`：启动配置
+- `lifeCycles`：生命周期
+
+提取应用 `template` 获取资源：
+
+- `genAppInstanceIdByName` 根据应用名称配置实例 ID：`appInstanceId`
+- 从配置文件中提取单例、沙箱、提取资源的方法等
+- 使用 `importEntry` 用提取的信息获取应用 `template` 和脚本执行器
+- `importEntry`将返回： `template` 模板、`execScripts` 执行脚本、`assetPublicPath` 资源路径、`getExternalScripts`
+- 优先执行`getExternalScripts` 获取额外的 `script`
+- 验证应用如果是单例模式，就等待上一个应用卸载后再加载 `prevAppUnmountedDeferred`，注 ⑥
+
+> 注 ⑥：和应用启动 `frameworkStartedDefer` 原理一样，`prevAppUnmountedDeferred.resolve()` 会在 `loadApp` - `parcelConfigGetter` - `unmount` 最后一个 `promise` 中调用
+
+替换应用内容和样式：
+
+- 通过 `getDefaultTplWrapper` 替换应用内容 `appContent`，如 `header`、包裹容器
+- `strictStyleIsolation` 根据 `sandbox` 判断是否为 `shadowDom` 模式加载样式
+- `scopedCSS` 判断是否通过作用域的方式加载样式
+- 通过 `createElement` 创建样式元素 `initialAppWrapperElement`，注 ⑦
+
+> 注 ⑦：将上面获得的 `appContent`、`strictStyleIsolation`、`scopedCSS`、`appInstanceId` 传入 `createElement`，根据情况决定是创建 `shadowDom` 还是 `css-module`
+
+渲染应用：
+
+- 如果应用信息指定了 `container` 提取为 `initialContainer`
+- 如果应用信息指定了 `render` 提取为 `legacyRender` 用于渲染回调
+- 通过 `getRender` 将传递上面的信息获取一个 `render` 方法
