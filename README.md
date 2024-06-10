@@ -384,7 +384,7 @@ npx http-server --port 30000 --cors
 
 流程：
 
-- 不在线或网速慢的情况不加载
+- 不在线或网速慢的情况不预加载
 - 使用 `requestIdleCallback` 利用空闲时间调用入口文件
 - 异步方法 `importEntry` 预加载入口文件，用于替代 `systemjs` [[回顾](https://github.com/cgfeel/micro-systemjs)]
 - 在入口文件预加载后返回两个方法继续利用 `requestIdleCallback` 在空闲时加载
@@ -402,3 +402,9 @@ npx http-server --port 30000 --cors
 > - 然后将`script`、样式表通过 `getExternalScripts`、`getExternalStyleSheets` 这两个方法进行处理
 > - 例如给样式增加前缀 `css-modules` 或放到 `shadowDom` 中
 > - 例如脚本会放到沙箱中执行
+
+在 `qiankuan` 中对于 `requestIdleCallback` 做了一个兼容处理，以便对于例如 `safari` 不支持的情况：
+
+- 通过 `MessageChannel` 进行通行
+- 执行 `requestIdleCallback` 过程中将空闲加载的方法添加到任务中，并通过 `post2` 向 `post1` 发起会话
+- `port1` 提取 `tasks` 队列的方法交给包装方法 `idleCall`，将指定对象作为 `props` 回传并执行按需加载的方法
