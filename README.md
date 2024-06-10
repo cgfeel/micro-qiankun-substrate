@@ -293,6 +293,7 @@ npx http-server --port 30000 --cors
 - 将 `unregisteredApps` 追加到 `microApps` 之后开始遍历注册每一个应用
 - 将拿到的应用信息，通过 `registerApplication` 注册到 `single-spa`
 - 由 `single-spa` 进行路由劫持，具体参考前面演示 [[查看](https://github.com/cgfeel/micro-qiankun-substrate)]
+- 调用成功的 `promise`：`frameworkStartedDefer.resolve()`
 - 注册完成后不会立即执行逻辑，会等待路由匹配之后执行 `app` 对应的方法
 
 #### 2. `start` 执行
@@ -373,7 +374,7 @@ npx http-server --port 30000 --cors
 
 > 注 ④：由 `single-spa` 的 `mount.js` 派发事件 [[查看](https://github.com/single-spa/single-spa/blob/main/src/lifecycles/mount.js)]
 
-#### 2.1.1. `prefetch` 预加载
+#### 2.1.2. `prefetch` 预加载
 
 目录：`prefetch.ts` - `prefetch` [[查看](https://github.com/umijs/qiankun/blob/eeebd3f76aa3a9d026b4f3a4e86682088e6295c1/src/prefetch.ts#L75)]
 
@@ -407,4 +408,42 @@ npx http-server --port 30000 --cors
 
 - 通过 `MessageChannel` 进行通行
 - 执行 `requestIdleCallback` 过程中将空闲加载的方法添加到任务中，并通过 `post2` 向 `post1` 发起会话
-- `port1` 提取 `tasks` 队列的方法交给包装方法 `idleCall`，将指定对象作为 `props` 回传并执行按需加载的方法
+- `port1` 提取 `tasks` 队列的方法交给包装方法 `idleCall`，将指定空闲对象作为 `props` 回传并执行按需加载的方法
+
+写过一个空闲创建 DOM 的演示 [[查看](https://codepen.io/levi0001/pen/ZEPJKrW)]
+
+> 疑问：`qiankuan` 使用了空闲加载的方法，但是加载的方法是微任务，并没有用到用到 `requestIdleCallback` 中的 `timeRemaining` 和 `didTimeout`，这样还是立即执行啊，并没有利用空闲时间
+
+#### 2.2. `autoDowngradeForLowVersionBrowser` 沙箱的降级处理
+
+目录：`apis.ts` - `autoDowngradeForLowVersionBrowser` [[查看](https://github.com/umijs/qiankun/blob/eeebd3f76aa3a9d026b4f3a4e86682088e6295c1/src/apis.ts#L26)]
+
+参数：
+
+- `configuration` 启动配置信息，即 `frameworkConfiguration`
+
+只提取两个属性：`sandbox` 沙箱，默认 `true`；`singular` 是否为单例模式
+
+使用快照：
+
+- 如果开启沙箱，但浏览器不支持 `promise`：
+- 采用快照沙箱，并在沙箱信息中添加 `loose: true`，如果不是单例模式应用，会发出警告
+
+新增，关闭快速启动：
+
+- 如果开启沙箱且支持 `promise`，但不支持 `const` 赋值解构，沙箱模式为 `sandbox.speedy: true`：
+- 关闭沙箱快速启动模式：`sandbox.speedy: false`
+
+其他模式均不做处理，将传递过来的配置信息原封返回回去
+
+#### 2.3. `startSingleSpa` 加载应用
+
+目录：`apis.ts` - `registerMicroApps` - `registerApplication` - `app` [[查看](https://github.com/umijs/qiankun/blob/eeebd3f76aa3a9d026b4f3a4e86682088e6295c1/src/apis.ts#L73)]
+
+启动应用时会调用注册信息 `registerApplication` 中的 `app` 方法，流程如下：
+
+- 设置加载状态：`loader(true);`
+- `frameworkStartedDefer.promise` 确保等待调用 `start` 才执行，见注册流程最后一步 [[查看](#1-registermicroapps-注册)]
+- 将应用名、`props`等应用信息、启动配置、生命周期传给 `promise` 方法 `loadApp`
+- `loadApp` 返回一个方法并执行得到一个包含挂载情况的对象
+- 最终返回应用的接入协议
