@@ -462,9 +462,9 @@ npx http-server --port 30000 --cors
 
 - `genAppInstanceIdByName` 根据应用名称配置实例 ID：`appInstanceId`
 - 从 `configuration` 中提取单例、沙箱、提取资源的方法等
-- 使用 `importEntry` 用提取的信息获取应用 `template` 和脚本执行器
+- 使用 `importEntry` 用提取的信息获取应用 `template` 和脚本执行器，注 ⑥
 - `getExternalScripts` 获取额外的 `script`
-- 验证应用如果是单例模式，就等待上一个应用卸载后再加载 `prevAppUnmountedDeferred`，注 ⑥
+- 验证应用如果是单例模式，就等待上一个应用卸载后再加载 `prevAppUnmountedDeferred`，注 ⑦
 
 > 注 ⑥：`importEntry`将返回：
 >
@@ -478,7 +478,7 @@ npx http-server --port 30000 --cors
 - 通过 `getDefaultTplWrapper` 替换应用内容 `appContent`，如 `header`、包裹容器
 - `strictStyleIsolation` 根据 `sandbox` 判断是否为 `shadowDom` 模式加载样式
 - `scopedCSS` 判断是否通过作用域的方式加载样式
-- 通过 `createElement` 创建样式元素 `initialAppWrapperElement`，注 ⑦
+- 通过 `createElement` 创建样式元素 `initialAppWrapperElement`，注 ⑧
 
 > 注 ⑧：将上面获得的 `appContent`、`strictStyleIsolation`、`scopedCSS`、`appInstanceId` 传入 `createElement`，根据情况决定是创建 `shadowDom` 还是 `css-module`
 
