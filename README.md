@@ -461,13 +461,17 @@ npx http-server --port 30000 --cors
 提取应用 `template` 获取资源：
 
 - `genAppInstanceIdByName` 根据应用名称配置实例 ID：`appInstanceId`
-- 从配置文件中提取单例、沙箱、提取资源的方法等
+- 从 `configuration` 中提取单例、沙箱、提取资源的方法等
 - 使用 `importEntry` 用提取的信息获取应用 `template` 和脚本执行器
-- `importEntry`将返回： `template` 模板、`execScripts` 执行脚本、`assetPublicPath` 资源路径、`getExternalScripts`
-- 优先执行`getExternalScripts` 获取额外的 `script`
+- `getExternalScripts` 获取额外的 `script`
 - 验证应用如果是单例模式，就等待上一个应用卸载后再加载 `prevAppUnmountedDeferred`，注 ⑥
 
-> 注 ⑥：和应用启动 `frameworkStartedDefer` 原理一样，`prevAppUnmountedDeferred.resolve()` 会在 `loadApp` - `parcelConfigGetter` - `unmount` 最后一个 `promise` 中调用
+> 注 ⑥：`importEntry`将返回：
+>
+> - `template` 模板、`execScripts` 执行脚本、`assetPublicPath` 资源路径、`getExternalScripts` 优先执行
+> - 其中 `template` 中会注释掉样页面中的 `script`，生成 `execScripts` 用于执行脚本
+>
+> 注 ⑦：和应用启动 `frameworkStartedDefer` 原理一样，`prevAppUnmountedDeferred.resolve()` 会在 `loadApp` - `parcelConfigGetter` - `unmount` 最后一个 `promise` 中调用
 
 替换应用内容和样式：
 
@@ -476,7 +480,7 @@ npx http-server --port 30000 --cors
 - `scopedCSS` 判断是否通过作用域的方式加载样式
 - 通过 `createElement` 创建样式元素 `initialAppWrapperElement`，注 ⑦
 
-> 注 ⑦：将上面获得的 `appContent`、`strictStyleIsolation`、`scopedCSS`、`appInstanceId` 传入 `createElement`，根据情况决定是创建 `shadowDom` 还是 `css-module`
+> 注 ⑧：将上面获得的 `appContent`、`strictStyleIsolation`、`scopedCSS`、`appInstanceId` 传入 `createElement`，根据情况决定是创建 `shadowDom` 还是 `css-module`
 
 渲染应用：
 
