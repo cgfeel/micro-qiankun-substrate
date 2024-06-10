@@ -185,7 +185,7 @@ npx http-server --port 30000 --cors
 
 > `wujie` 利用了空 `iframe` 来做 JS 的隔离，`shadowDOM` 来做 CSS 隔离
 
-步骤：
+**步骤：**
 
 1. 创建一个模板 `template`
 2. 将模板变成 `Dom` 元素 `appElement`
@@ -193,11 +193,11 @@ npx http-server --port 30000 --cors
 4. 将 `Dom` 内容清空，这样 `appElement` 就只剩下 `Shadow DOM`
 5. 将只带有沙箱的 `Dom` 的 `appElement` 添加到 `body` 下
 
-优点：
+**优点：**
 
 - 完全隔离
 
-缺点：
+**缺点：**
 
 - 子应用没办法直接挂载到 `body` 下，而是一个完全隔离的 `shadownDOM` 沙箱内
 - `closed`模式下，父应用无法管理子应用
@@ -212,16 +212,16 @@ npx http-server --port 30000 --cors
 - 目录：`sandbox.html` [[查看](https://github.com/cgfeel/micro-qiankun-app-static/blob/main/sandbox/sandbox.html)]
 - URL：`/sandbox/sandbox.html`
 
-过程：
+**过程：**
 
 - 加载 a 应用更改 `window` 属性，卸载删除
 - 加载 b 应用更改 `window` 属性
 
-模式：
+**模式：**
 
 - 先保存 a 应用的属性，失活的时候把修改的属性存起来，激活的时候还原回来
 
-优缺点：
+**优缺点：**
 
 - 优点：不存在兼容问题
 - 缺点：浪费内存，要给 `window` 拍照
@@ -233,18 +233,18 @@ npx http-server --port 30000 --cors
 - 目录：`legacy-sandbox.html` [[查看](https://github.com/cgfeel/micro-qiankun-app-static/blob/main/sandbox/legacy-sandbox.html)]
 - URL：`/sandbox/legacy-sandbox.html`
 
-原理：
+**原理：**
 
 - 创建 3 个对象分别记录：修改 `modifyPropsMap`、新增 `addedPropsMap`、所有记录 `currentPropsMap`
 - 创建一个 `proxy` ，用于设置值时记录副本，获取值时读取 `window`
 - 激活时将 `currentPropsMap` 重新赋值给 `window`
 - 失活时将 `modifyPropsMap`、`addedPropsMap` 拿出来还原
 
-优点：
+**优点：**
 
 - 不用为 `window` 拍照消耗内存
 
-缺点：
+**缺点：**
 
 - `proxy` 需要现代浏览器支持
 - 只支持一个应用，多个应用一起运行 `window` 就一个，就乱了
@@ -257,18 +257,18 @@ npx http-server --port 30000 --cors
 - 目录：`proxy-sandbox.html` [[查看](https://github.com/cgfeel/micro-qiankun-app-static/blob/main/sandbox/proxy-sandbox.html)]
 - URL：`/sandbox/proxy-sandbox.html`
 
-原理：
+**原理：**
 
 - 沙箱中用每个实例的 `proxy` 作为 `window`
 - 每个应用的 `window` 修改互不干扰，也不影响真实的 `window`
 - 通过 `runing` 来决定沙箱激活状态，来决定每个应用中 `window` 取值
 
-优点：
+**优点：**
 
 - 不用为 `window` 拍照消耗内存
 - 支持多个应用互不干扰，也不影响真实的 `window`
 
-缺点：
+**缺点：**
 
 - `proxy` 需要现代浏览器支持
 
@@ -282,12 +282,12 @@ npx http-server --port 30000 --cors
 
 目录：`apis.ts` - `registerMicroApps` [[查看](https://github.com/umijs/qiankun/blob/eeebd3f76aa3a9d026b4f3a4e86682088e6295c1/src/apis.ts#L59)]
 
-参数：
+**参数：**
 
 - `apps`：注册的应用信息
 - `lifeCycles`：生命周期
 
-流程：
+**流程：**
 
 - 通过 `microApps` 筛选 `app.name` 排除已注册过的应用得到 `unregisteredApps`
 - 将 `unregisteredApps` 追加到 `microApps` 之后开始遍历注册每一个应用
@@ -317,7 +317,7 @@ npx http-server --port 30000 --cors
 > - 渲染：单例同一时间只能渲染一个应用
 > - 沙箱：多例只能用 `proxy` 作为沙箱，而单例除此之外还支持快照沙箱来实现
 
-流程：
+**流程：**
 
 - 如果支持预加载则开始调用预加载策略：`doPrefetchStrategy` 注 ②
 - 对不支持 `proxy` 的沙箱做降级处理：`autoDowngradeForLowVersionBrowser`
@@ -330,7 +330,7 @@ npx http-server --port 30000 --cors
 
 目录：`prefetch.ts` - `doPrefetchStrategy` [[查看](https://github.com/umijs/qiankun/blob/eeebd3f76aa3a9d026b4f3a4e86682088e6295c1/src/prefetch.ts#L111)]
 
-参数：
+**参数：**
 
 - `apps`：所有注册的应用
 - `prefetchStrategy`：预加载策略
@@ -378,19 +378,19 @@ npx http-server --port 30000 --cors
 
 目录：`prefetch.ts` - `prefetch` [[查看](https://github.com/umijs/qiankun/blob/eeebd3f76aa3a9d026b4f3a4e86682088e6295c1/src/prefetch.ts#L75)]
 
-参数：
+**参数：**
 
 - `entry`：应用入口链接
 - `opts`：启动选项，即 `importEntryOpts`
 
-流程：
+**流程：**
 
 - 不在线或网速慢的情况不预加载
 - 使用 `requestIdleCallback` 利用空闲时间调用入口文件
 - 异步方法 `importEntry` 预加载入口文件，用于替代 `systemjs` [[回顾](https://github.com/cgfeel/micro-systemjs)]
 - 在入口文件预加载后返回两个方法继续利用 `requestIdleCallback` 在空闲时加载
 
-`importEntry` 返回两个方法：
+**`importEntry` 返回两个方法：**
 
 - `getExternalScripts` 获取脚本、`getExternalStyleSheets` 获取样式，注 ⑤
 - 这两个方法都是一个异步方法，最终返回资源链接的集合：`Promise<string[]>`
@@ -418,18 +418,18 @@ npx http-server --port 30000 --cors
 
 目录：`apis.ts` - `autoDowngradeForLowVersionBrowser` [[查看](https://github.com/umijs/qiankun/blob/eeebd3f76aa3a9d026b4f3a4e86682088e6295c1/src/apis.ts#L26)]
 
-参数：
+**参数：**
 
 - `configuration` 启动配置信息，即 `frameworkConfiguration`
 
 只提取两个属性：`sandbox` 沙箱，默认 `true`；`singular` 是否为单例模式
 
-使用快照：
+**使用快照：**
 
 - 如果开启沙箱，但浏览器不支持 `promise`：
 - 采用快照沙箱，并在沙箱信息中添加 `loose: true`，如果不是单例模式应用，会发出警告
 
-新增，关闭快速启动：
+**新增，关闭快速启动：**
 
 - 如果开启沙箱且支持 `promise`，但不支持 `const` 赋值解构，沙箱模式为 `sandbox.speedy: true`：
 - 关闭沙箱快速启动模式：`sandbox.speedy: false`
@@ -452,13 +452,13 @@ npx http-server --port 30000 --cors
 
 目录：`loader.ts` - `loadApp` [[查看](https://github.com/umijs/qiankun/blob/eeebd3f76aa3a9d026b4f3a4e86682088e6295c1/src/loader.ts#L244)]
 
-参数：
+**参数：**
 
 - `app`：应用信息
 - `configuration`：启动配置
 - `lifeCycles`：生命周期
 
-提取应用 `template` 获取资源：
+**提取应用 `template` 获取资源：**
 
 - `genAppInstanceIdByName` 根据应用名称配置实例 ID：`appInstanceId`
 - 从 `configuration` 中提取单例、沙箱、提取资源的方法等
@@ -473,17 +473,58 @@ npx http-server --port 30000 --cors
 >
 > 注 ⑦：和应用启动 `frameworkStartedDefer` 原理一样，`prevAppUnmountedDeferred.resolve()` 会在 `loadApp` - `parcelConfigGetter` - `unmount` 最后一个 `promise` 中调用
 
-替换应用内容和样式：
+**替换应用内容和样式：**
 
 - 通过 `getDefaultTplWrapper` 替换应用内容 `appContent`，如 `header`、包裹容器
 - `strictStyleIsolation` 根据 `sandbox` 判断是否为 `shadowDom` 模式加载样式
 - `scopedCSS` 判断是否通过作用域的方式加载样式
 - 通过 `createElement` 创建样式元素 `initialAppWrapperElement`，注 ⑧
 
-> 注 ⑧：将上面获得的 `appContent`、`strictStyleIsolation`、`scopedCSS`、`appInstanceId` 传入 `createElement`，根据情况决定是创建 `shadowDom` 还是 `css-module`
+> 注 ⑧：
+>
+> 将上面获得的 `appContent`、`strictStyleIsolation`、`scopedCSS`、`appInstanceId` 传入 `createElement`
+> 根据情况决定是创建 `shadowDom` 还是 `css-module`
+> 如果是 `css-module` 还会将所有 `link` 样式资源转换成 `style`
 
-渲染应用：
+**渲染应用：**
 
-- 如果应用信息指定了 `container` 提取为 `initialContainer`
+- 如果应用信息指定了 `container` 提取为 `initialContainer` 作为初始化容器
 - 如果应用信息指定了 `render` 提取为 `legacyRender` 用于渲染回调
-- 通过 `getRender` 将传递上面的信息获取一个 `render` 方法
+- 通过 `getRender` 将传递上面的拿到的信息获取一个 `render` 方法
+
+**创建沙箱容器：**
+
+- 通过 `getAppWrapperGetter` 返回一个函数 `initialAppWrapperGetter`，用于提取沙箱包装器的 DOM
+- 声明代理的 `global` 用沙箱代理对象作为全局 `window`
+- 声明 `mountSandbox`、`unmountSandbox`，用于在应用挂载和卸载的时候，将沙箱对应的方法添加到队列中
+- 声明 `sandboxContainer` 用于获取沙箱实例
+- 通过 `createSandboxContainer` 创建容器，并更新声明的对象
+
+在创建沙箱过程中声明了两个对象：
+
+- `useLooseSandbox`：根据 `sandbox.loose` 判断，`true` 即快照沙箱，`false` 则采用 `proxy` 模式
+- `speedySandbox`：根据 `sandbox.speedy` 决定是否开启快速启动模式
+
+**在沙箱中运行脚本：**
+
+先提取生命周期对应的 `hook`
+
+- 通过 `getAddOns` 将代理的 `global` 注入属性，如：`__POWERED_BY_QIANKUN__` 等，注 ⑨
+- 然后将自定义的生命周期和注入的属性一同合并为一个对象，并结构为不同的 `hook`
+
+> 注 ⑨：按照生命周期注入 `global` 对应的方法，如：`async beforeLoad() {}`，然后加将对应的 `hook` 作为挂载时任务队列执行
+
+**挂载应用：**
+
+- 通过 `execHooksChain` 先将 `beforeLoad` 这组方法拍平了执行
+- 通过前面拿到的 `execScripts` 在沙箱中执行脚本
+- 将拿到的对象通过 `getLifecyclesFromExports` 获取接入应用的导出协议：`bootstrap` 等
+- 从 `getMicroAppStateActions` 获取发布和订阅的方法
+- 添加一个 `syncAppWrapperElement2Sandbox` 用于在挂载过程中更新 `initialAppWrapperElement`
+- 最后返回一个带有 `mount`、`unmount` 属性对象的方法，用于给 `registerApplication` 在 `app` 函数中使用
+
+下面分别对挂载和卸载队列补充一个说明：
+
+**`mount`队列方法：**
+
+- 开发环境检查是否支持 `Performance` 并执行相关操作
