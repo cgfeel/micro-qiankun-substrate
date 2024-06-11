@@ -572,3 +572,37 @@ npx http-server --port 30000 --cors
 至此 `qiankun` 的注册和启动流程大致整理完毕
 
 ---- 分割线 ----
+
+### 常见问题
+
+模块依赖如何复用？
+
+1. 创建共享模块，独立打包放到 CDN 上，在子应用中直接加载 CDN 链接
+2. 打包将模块放到主应用上，通过自定义属性传递给子应用
+3. 使用 `webpack v5` 联邦模块打包处理公共资源
+4. 两个应用之间加载资源的 URL 相同即可复用（HTTP 缓存）
+
+应用之间组件如何复用？
+
+- 将共享的组件单独打包，父应用加载子应用时进行传入
+
+`Vite` 支持问题？
+
+- 基于 `Vite` 构建的项目中 `import`、`export` 并没有被转码，会导致直接报错
+- 可以通过打包成 `umd` 格式后，在生产环境再接入 `Vite`
+
+`qiankun` 嵌套的问题
+
+- 需要尽量避免多重沙箱嵌套，会导致性能问题、`window` 混乱的问题；
+- 如果需要 `qiankun` 套 `qiankun`，应该在子应用中关闭沙箱
+
+`css` 沙箱不完美
+
+- 在沙箱中已总结，查看：`qiankun` 沙箱隔离样式 [[查看](https://github.com/cgfeel/micro-qiankun-substrate)]
+- 其中 `strictStyleIsolation` 将要被移除，这样的话也只能通过 `experimentalStyleIsolation` 进行隔离
+
+要移除的方法和属性：
+
+- `onGlobalStateChange`、`setGlobalState`、`addGlobalUncaughtErrorHandler`、`strictStyleIsolation`
+
+> 但是，以目前 `qiankun` 更新情况，3.0 似乎很渺茫
