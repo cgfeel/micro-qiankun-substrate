@@ -276,7 +276,7 @@ npx http-server --port 30000 --cors
 
 ### `qiankun` 原理
 
-分为注册和运行，为了便于阅读全部以当前 `github` 提交的版本 `eeebd3f76aa3a9d026b4f3a4e86682088e6295c1` [[查看](https://github.com/umijs/qiankun/tree/eeebd3f76aa3a9d026b4f3a4e86682088e6295c1)] 为准
+分为注册和运行，为了便于阅读全部以当前官方版本 `eeebd3f76aa3a9d026b4f3a4e86682088e6295c1` [[查看](https://github.com/umijs/qiankun/tree/eeebd3f76aa3a9d026b4f3a4e86682088e6295c1)] 为准
 
 > 这一章节链接指向官方仓库，由于内容比较长，每一条信息我都暴露了关键的对象名，可以打开链接复制关键的对象名，查看上下文对照理解
 
