@@ -374,7 +374,7 @@ npx http-server --port 30000 --cors
 
 > 注 ④：由 `single-spa` 的 `mount.js` 派发事件 [[查看](https://github.com/single-spa/single-spa/blob/main/src/lifecycles/mount.js)]
 
-#### 2.1.2. `prefetch` 预加载
+#### 2.1.2. `prefetch` 执行预加载
 
 目录：`prefetch.ts` - `prefetch` [[查看](https://github.com/umijs/qiankun/blob/eeebd3f76aa3a9d026b4f3a4e86682088e6295c1/src/prefetch.ts#L75)]
 
@@ -491,6 +491,7 @@ npx http-server --port 30000 --cors
 - 如果应用信息指定了 `container` 提取为 `initialContainer` 作为初始化容器
 - 如果应用信息指定了 `render` 提取为 `legacyRender` 用于渲染回调
 - 通过 `getRender` 将传递上面的拿到的信息获取一个 `render` 方法
+- 第一次加载设置应用可见区域 dom 结构
 
 **创建沙箱容器：**
 
@@ -517,14 +518,56 @@ npx http-server --port 30000 --cors
 **挂载应用：**
 
 - 通过 `execHooksChain` 先将 `beforeLoad` 这组方法拍平了执行
-- 通过前面拿到的 `execScripts` 在沙箱中执行脚本
-- 将拿到的对象通过 `getLifecyclesFromExports` 获取接入应用的导出协议：`bootstrap` 等
+- 通过 `execScripts` 在沙箱中执行脚本，注 ⑩
+- 将拿到的对象通过 `getLifecyclesFromExports` 获取接入应用的导出协议，注 ⑪
 - 从 `getMicroAppStateActions` 获取发布和订阅的方法
 - 添加一个 `syncAppWrapperElement2Sandbox` 用于在挂载过程中更新 `initialAppWrapperElement`
-- 最后返回一个带有 `mount`、`unmount` 属性对象的方法，用于给 `registerApplication` 在 `app` 函数中使用
+- 最后返回一个带有 `mount`、`unmount` 等属性对象的方法
+- 返回的方法用于给 `registerApplication` 在 `app` 函数中调用并将接入协议提供给 `single-spa`
 
-下面分别对挂载和卸载队列补充一个说明：
+> 注 ⑪：来自 `importEntry`：
+>
+> - `execScripts` 会先将获取到应用中的 `script`，作为 `string` 提取出来
+> - 如果是 `entry` 入口文件会先记录一下原始的 `global` 内容
+> - 然后通过 `geval` 直接编译 `script`
+>
+> 在 `geval` 中：
+>
+> - 先通过 `with` 包裹沙箱的 `global` 作为代理的 `window`，这样沙箱内所有的 `window` 都指向 `proxy` 了
+> - 同时注入：`Array`、`ArrayBuffer` 等对象
+> - 技术之后就可以从 `global` 中提取最后新增的属性作为接入协议
+>
+> 注 ⑪：接入协议包括 `bootstrap`、`mount`、`unmount`、`update`，通过获取在 `window`（这里的 `window` 也可能是一个代理对象）最后新增的属性，拿到对应的脚本执行后拿到协议
 
-**`mount`队列方法：**
+最后分别对返回对象中的 `mount` 和 `unmount` 中的队列补充一个说明：
 
-- 开发环境检查是否支持 `Performance` 并执行相关操作
+**`mount`队列顺序：**
+
+- 开发环境检查是否支持 `Performance` 并标记测量和分析代码的执行时间和性能
+- 如果是单例模式只有在前一个应用卸载后才能继续挂载
+- 通过 `getAppWrapperGetter` 返回一个函数 `appWrapperGetter`，用于挂载时作为应用外部的容器，注 ⑫
+- 添加 `mount hook`, 确保每次应用加载前容器 `dom` 结构已经设置完毕，注 ⑬
+- 执行挂载沙箱 `mountSandbox`
+- 加载应用前，将 `beforeMount` 拍平挨个执行
+- 调用子应用挂载方法 `mount`，传递应用信息、自定义 `props`，`appWrapperGetter` 返回的容器，订阅和发布方法
+- 挂载之后完成渲染
+- 将 `afterMount` 拍平挨个执行
+- 如果是单例模式更新 `prevAppUnmountedDeferred`，以便卸载的时候 `resolve`
+- 标记整个挂载消耗的性能
+
+> 注 ⑫：拿到的是 `DOM` 或 `shadowDom`
+>
+> 注 ⑬：应用会在卸载的时候销毁元素（容器），再次挂载的时候需要重新创建。应用一旦加载成功后就不再需要加载，每次挂载的时候，会重新执行 `getAppWrapperGetter` 获取一个容器解析的方法、将应用挂载到容器 `DOM` 里
+
+**`unmount`队列顺序：**
+
+- 将 `beforeUnmount` 拍平挨个执行
+- 调用子应用卸载方法 `unmount`，传递应用信息、自定义 `props`，`appWrapperGetter` 返回的容器
+- 执行卸载沙箱 `mountSandbox`
+- 将 `afterUnmount` 拍平挨个执行
+- 卸载应用容器 `DOM` 元素
+- 如果是单例模式，`prevAppUnmountedDeferred` 执行 `resolve` 以便下一个应用挂载
+
+至此 `qiankun` 的注册和启动流程大致整理完毕
+
+---- 分割线 ----
