@@ -444,7 +444,7 @@ npx http-server --port 30000 --cors
 启动应用时会调用注册信息 `registerApplication` 中的 `app` 方法，流程如下：
 
 - 设置加载状态：`loader(true);`
-- `frameworkStartedDefer.promise` 确保等待调用 `start` 才执行，见注册流程最后一步 [[查看](#1-registermicroapps-注册)]
+- `frameworkStartedDefer.promise` 确保等待调用 `start` 才执行，见启动应用流程最后一步 [[查看](#2-start-执行)]
 - 将应用名、`props`等应用信息、启动配置、生命周期传给 `promise` 方法 `loadApp` 来加载应用
 - `loadApp` 返回一个方法并执行得到一个包含挂载情况的对象
 - 最终返回应用的接入协议
