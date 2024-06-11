@@ -304,7 +304,7 @@ npx http-server --port 30000 --cors
 和 `registerMicroApps` 一样，衍用了 `single-spa` 的 `start` 方法，在此基础上增加了优化的参数：
 
 - `prefetch`：应用预加载，默认为 `true`
-- `singular`：默认为 `true`，单例模式，也可以接受一个方法，类型为 `(app: RegistrableApp<any>) => Promise<boolean>` 注 ①
+- `singular`：默认为 `true`，单例模式，也可以接受一个方法，类型为 `(app: RegistrableApp<any>) => Promise<boolean>`，注 ①
 - `sandbox`：沙箱
 
 其他的参数将在后面整理官方 API 时记录
@@ -320,7 +320,7 @@ npx http-server --port 30000 --cors
 
 **流程：**
 
-- 如果支持预加载则开始调用预加载策略：`doPrefetchStrategy` 注 ②
+- 如果支持预加载则开始调用预加载策略：`doPrefetchStrategy`，注 ②
 - 对不支持 `proxy` 的沙箱做降级处理：`autoDowngradeForLowVersionBrowser`
 - 启动 `single-spa`：`startSingleSpa`
 - 完成启动，调用成功的 `promise`：`frameworkStartedDefer.resolve()`
@@ -339,9 +339,9 @@ npx http-server --port 30000 --cors
 
 加载策略 `prefetchStrategy`：
 
-- 数组：根据数组筛选应用 - 等待加载 注 ③
-- `Promise` 函数：将所有应用传递过去返回两个对象：`criticalAppNames` 立即加载、`prefetchAfterFirstMounted` 等待加载 注 ③
-- `true`：所有应用等待加载 注 ③
+- 数组：根据数组筛选应用 - 等待加载，注 ③
+- `Promise` 函数：将所有应用传递过去返回两个对象：`criticalAppNames` 立即加载、`prefetchAfterFirstMounted` 等待加载，注 ③
+- `true`：所有应用等待加载，注 ③
 - `all`：所有应用立即加载
 
 > 注 ③：等待第一个应用加载完毕后加载其他应用 `prefetchAfterFirstMounted`，见 2.1.1
