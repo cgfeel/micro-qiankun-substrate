@@ -295,7 +295,6 @@ npx http-server --port 30000 --cors
 - 将 `unregisteredApps` 追加到 `microApps` 之后开始遍历注册每一个应用
 - 将拿到的应用信息，通过 `registerApplication` 注册到 `single-spa`
 - 由 `single-spa` 进行路由劫持，具体参考 `single-spa` 记录 [[查看](https://github.com/cgfeel/micro-single-app-substrate)]
-- 调用成功的 `promise`：`frameworkStartedDefer.resolve()`
 - 注册完成后不会立即执行逻辑，会等待路由匹配之后执行 `app` 对应的方法
 
 #### 2. `start` 执行
