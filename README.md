@@ -407,7 +407,7 @@ npx http-server --port 30000 --cors
 
 在 `qiankuan` 中对于 `requestIdleCallback` 做了一个兼容处理，以便对于例如 `safari` 不支持的情况：
 
-- 通过 `MessageChannel` 进行通行
+- 通过 `MessageChannel` 进行通信
 - 执行 `requestIdleCallback` 过程中将空闲加载的方法添加到任务中，并通过 `post2` 向 `post1` 发起会话
 - `port1` 提取 `tasks` 队列的方法交给包装方法 `idleCall`，将指定空闲对象作为 `props` 回传并执行按需加载的方法
 
