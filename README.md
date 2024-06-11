@@ -566,7 +566,7 @@ npx http-server --port 30000 --cors
 - 调用子应用卸载方法 `unmount`，传递应用信息、自定义 `props`，`appWrapperGetter` 返回的容器
 - 执行卸载沙箱 `mountSandbox`
 - 将 `afterUnmount` 拍平挨个执行
-- 卸载应用容器 `DOM` 元素
+- 通过 `render` 等方法卸载应用容器 `DOM` 元素
 - 如果是单例模式，`prevAppUnmountedDeferred` 执行 `resolve` 以便下一个应用挂载
 
 至此 `qiankun` 的注册和启动流程大致整理完毕
