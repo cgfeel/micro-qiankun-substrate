@@ -598,7 +598,7 @@ npx http-server --port 30000 --cors
 
 `css` 沙箱不完美
 
-- 在沙箱中已总结，查看：`qiankun` 沙箱隔离样式 [[查看](https://github.com/cgfeel/micro-qiankun-substrate)]
+- 在沙箱中已总结，查看：`qiankun` 沙箱隔离样式 [[查看](#qiankun-沙箱隔离样式)]
 - 其中 `strictStyleIsolation` 将要被移除，这样的话也只能通过 `experimentalStyleIsolation` 进行隔离
 
 要移除的方法和属性：
