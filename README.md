@@ -551,7 +551,7 @@ npx http-server --port 30000 --cors
 - 执行挂载沙箱 `mountSandbox`
 - 加载应用前，将 `beforeMount` 拍平挨个执行
 - 调用子应用挂载方法 `mount`，传递应用信息、自定义 `props`，`appWrapperGetter` 返回的容器，订阅和发布方法
-- 挂载之后完成渲染
+- 挂载之后完成渲染 `render`
 - 将 `afterMount` 拍平挨个执行
 - 如果是单例模式更新 `prevAppUnmountedDeferred`，以便卸载的时候 `resolve`
 - 标记整个挂载消耗的性能
