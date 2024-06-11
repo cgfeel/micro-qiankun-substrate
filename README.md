@@ -536,7 +536,7 @@ npx http-server --port 30000 --cors
 >
 > - 先通过 `with` 包裹沙箱的 `global` 作为代理的 `window`，这样沙箱内所有的 `window` 都指向 `proxy` 了
 > - 同时注入：`Array`、`ArrayBuffer` 等对象
-> - 技术之后就可以从 `global` 中提取最后新增的属性作为接入协议
+> - 解析之后就可以从 `global` 中提取最后新增的属性作为接入协议
 >
 > 注 ⑪：接入协议包括 `bootstrap`、`mount`、`unmount`、`update`，通过获取在 `window`（这里的 `window` 也可能是一个代理对象）最后新增的属性，拿到对应的脚本执行后拿到协议
 
