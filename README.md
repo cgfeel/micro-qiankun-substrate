@@ -446,7 +446,7 @@ npx http-server --port 30000 --cors
 - 设置加载状态：`loader(true);`
 - `frameworkStartedDefer.promise` 确保等待调用 `start` 才执行，见启动应用流程最后一步 [[查看](#2-start-执行)]
 - 将应用名、`props`等应用信息、启动配置、生命周期传给 `promise` 方法 `loadApp` 来加载应用
-- `loadApp` 返回一个方法并执行得到一个包含挂载情况的对象
+- `loadApp` 返回一个方法并执行得到接入协议，包含：`bootstrap`、`mount`、`unmount`、应用信息
 - 最终返回应用的接入协议
 
 #### 2.3.1. `loadApp` 加载应用
