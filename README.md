@@ -513,9 +513,9 @@ npx http-server --port 30000 --cors
 先提取生命周期对应的 `hook`
 
 - 通过 `getAddOns` 将代理的 `global` 注入属性，如：`__POWERED_BY_QIANKUN__` 等，注 ⑨
-- 然后将自定义的生命周期和注入的属性一同合并为一个对象，并结构为不同的 `hook`
+- 然后将自定义的生命周期和注入的属性一同合并为一个对象，并解构为不同的 `hook`
 
-> 注 ⑨：按照生命周期注入 `global` 对应的方法，如：`async beforeLoad() {}`，然后加将对应的 `hook` 作为挂载时任务队列执行
+> 注 ⑨：按照生命周期注入 `global` 对应的方法，然后加将对应的 `hook` （如：`async beforeLoad() {}`）作为挂载时任务队列执行
 
 **挂载应用：**
 
