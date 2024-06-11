@@ -484,9 +484,9 @@ npx http-server --port 30000 --cors
 
 > 注 ⑧：
 >
-> 将上面获得的 `appContent`、`strictStyleIsolation`、`scopedCSS`、`appInstanceId` 传入 `createElement`
-> 根据情况决定是创建 `shadowDom` 还是 `css-module`
-> 如果是 `css-module` 还会将所有 `link` 样式资源转换成 `style`
+> - 将上面获得的 `appContent`、`strictStyleIsolation`、`scopedCSS`、`appInstanceId` 传入 `createElement`
+> - 根据情况决定是创建 `shadowDom` 还是 `css-module`
+> - 如果是 `css-module` 还会将所有 `link` 样式资源转换成 `style`
 
 **渲染应用：**
 
