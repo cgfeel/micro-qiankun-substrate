@@ -344,7 +344,7 @@ npx http-server --port 30000 --cors
 - `true`：所有应用等待加载，注 ③
 - `all`：所有应用立即加载
 
-> 注 ③：等待第一个应用加载完毕后加载其他应用 `prefetchAfterFirstMounted`，见 2.1.1
+> 注 ③：等待加载是指，等待第一个应用加载完毕后加载其他应用 `prefetchAfterFirstMounted`，见 2.1.1
 
 #### 2.1.1. `prefetchAfterFirstMounted` 等待预加载
 
